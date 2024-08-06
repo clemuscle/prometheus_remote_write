@@ -1,0 +1,51 @@
+services:
+  prometheus_dev:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus_dev:/prometheus
+      - ./dev/prometheus/:/etc/prometheus/
+    ports:
+      - "9091:9090"
+    networks:
+      - monitoring_network
+
+  grafana_dev:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus_dev
+    ports:
+      - "3001:3000"
+    networks:
+      - monitoring_network
+
+  prometheus_prod:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus_prod:/prometheus
+      - ./prod/prometheus/:/etc/prometheus/
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring_network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-remote-write-receiver"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+
+
+  grafana_prod:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus_prod
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring_network
+volumes:
+  prometheus_dev: {}
+  prometheus_prod: {}
+
+networks:
+  monitoring_network:
+    driver: bridge
