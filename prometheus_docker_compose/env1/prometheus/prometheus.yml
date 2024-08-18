@@ -7,9 +7,9 @@ scrape_configs:
       - targets: ['localhost:9090']  # Scrape le Prometheus lui-même en dev
 
 remote_write:
-  - url: "http://prometheus_prod:9090/api/v1/write"
+  - url: "http://prometheus_monitoring:9090/api/v1/write"
     write_relabel_configs:
       - source_labels: [__name__]
         regex: '.*'
         target_label: 'environment'
-        replacement: 'dev'
+        replacement: 'env1'

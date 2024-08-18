@@ -1,28 +1,30 @@
 services:
-  prometheus_dev:
+  prometheus_env1:
     image: prom/prometheus:latest
     volumes:
-      - prometheus_dev:/prometheus
-      - ./dev/prometheus/:/etc/prometheus/
+      - prometheus_env1:/prometheus
+      - ./env1/prometheus/:/etc/prometheus/
     ports:
       - "9091:9090"
     networks:
       - monitoring_network
 
-  grafana_dev:
-    image: grafana/grafana:latest
-    depends_on:
-      - prometheus_dev
-    ports:
-      - "3001:3000"
-    networks:
-      - monitoring_network
-
-  prometheus_prod:
+  prometheus_env2:
     image: prom/prometheus:latest
     volumes:
-      - prometheus_prod:/prometheus
-      - ./prod/prometheus/:/etc/prometheus/
+      - prometheus_env2:/prometheus
+      - ./env2/prometheus/:/etc/prometheus/
+    ports:
+      - "9092:9090"
+    networks:
+      - monitoring_network
+  
+
+  prometheus_monitoring:
+    image: prom/prometheus:latest
+    volumes:
+      - prometheus_monitoring:/prometheus
+      - ./monitoring/prometheus/:/etc/prometheus/
     ports:
       - "9090:9090"
     networks:
@@ -33,18 +35,19 @@ services:
       - "--storage.tsdb.path=/prometheus"
       - "--web.enable-lifecycle"
 
-
-  grafana_prod:
+  grafana_monitoring:
     image: grafana/grafana:latest
     depends_on:
-      - prometheus_prod
+      - prometheus_monitoring
     ports:
       - "3000:3000"
     networks:
       - monitoring_network
+
 volumes:
-  prometheus_dev: {}
-  prometheus_prod: {}
+  prometheus_monitoring: {}
+  prometheus_env1: {}
+  prometheus_env2: {}
 
 networks:
   monitoring_network:
