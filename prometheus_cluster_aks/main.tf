@@ -43,3 +43,15 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     load_balancer_sku = "standard"
   }
 }
+
+resource "kubernetes_manifest" "prometheus_configmap" {
+  manifest = file("${path.module}/config/prometheus-configmap.yaml")
+}
+
+resource "kubernetes_manifest" "prometheus_deployment" {
+  manifest = file("${path.module}/config/prometheus-deployment.yaml")
+}
+
+resource "kubernetes_manifest" "grafana_deployment" {
+  manifest = file("${path.module}/config/grafana-deployment.yaml")
+}
